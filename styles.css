@@ -1,0 +1,167 @@
+:root {
+  --ink: #2d2d2d;
+  --paper: #f7f7f7;
+  --sky1: #e4f4ff;
+  --sky2: #fff5d9;
+  --p1: #00bcd4;
+  --p2: #ff5aa5;
+  --cactus: #34a853;
+  --ground: #9aa0a6;
+  --accent: #ffb300;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  background: linear-gradient(135deg, #1f2330, #232b5a);
+  color: var(--ink);
+}
+
+.app {
+  max-width: 880px;
+  margin: 1.2rem auto;
+  padding: 1rem;
+  background: var(--paper);
+  border: 10px solid #202124;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 1rem;
+  font-weight: 700;
+}
+
+.controls,
+.status-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+}
+
+input,
+button {
+  border: 2px solid #2d2d2d;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem;
+}
+
+button {
+  background: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.panel {
+  border: 2px solid #2d2d2d;
+  background: #fff;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.arena {
+  background: linear-gradient(var(--sky1), var(--sky2));
+}
+
+.lane-title {
+  font-size: 0.8rem;
+  margin-bottom: 0.15rem;
+}
+
+.dino-lane {
+  position: relative;
+  height: 92px;
+  margin-bottom: 0.6rem;
+  border: 2px solid #303030;
+  overflow: hidden;
+}
+
+.dino-lane::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  border-top: 2px dashed var(--ground);
+}
+
+.cloud,
+.runner,
+.obstacle {
+  position: absolute;
+}
+
+.cloud {
+  top: 10px;
+  color: #b6bdc5;
+  font-size: 1rem;
+}
+
+.runner {
+  bottom: 10px;
+  font-size: 1.85rem;
+}
+
+.obstacle {
+  bottom: 8px;
+  font-size: 1.7rem;
+  color: var(--cactus);
+}
+
+.player-one-lane .runner {
+  color: var(--p1);
+}
+
+.player-two-lane .runner {
+  color: var(--p2);
+}
+
+#message {
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+ul,
+ol {
+  margin: 0.55rem 0 0;
+  padding-left: 1.1rem;
+}
+
+li {
+  margin-bottom: 0.24rem;
+}
