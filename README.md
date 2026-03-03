@@ -1,11 +1,11 @@
 # Webapp-game
 
-A colorful, turn-based browser game inspired by Chrome's offline dinosaur runner.
+A colorful, retro-styled browser game inspired by Chrome's offline dinosaur runner, now with turn-based gameplay.
 
 ## Features
-- Two-player turn-based gameplay.
-- Random dice rolls and obstacle jumps.
-- Colorful race-track UI.
+- Chrome dino-like track presentation (clouds, cactus obstacles, dino runners).
+- Two-player, turn-based rounds with roll + jump decisions.
+- Live score + HI score display.
 - Local leaderboard (top 5 scores) saved in `localStorage`.
 
 ## Run locally

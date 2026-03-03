@@ -1,13 +1,13 @@
 :root {
-  --bg-dark: #181736;
-  --bg-mid: #2b2963;
-  --panel: rgba(255, 255, 255, 0.12);
-  --text: #f4f4ff;
-  --accent: #ffd166;
-  --player-one: #4ecdc4;
-  --player-two: #ff6b6b;
-  --danger: #ef476f;
-  --success: #06d6a0;
+  --ink: #2d2d2d;
+  --paper: #f7f7f7;
+  --sky1: #e4f4ff;
+  --sky2: #fff5d9;
+  --p1: #00bcd4;
+  --p2: #ff5aa5;
+  --cactus: #34a853;
+  --ground: #9aa0a6;
+  --accent: #ffb300;
 }
 
 * {
@@ -16,81 +16,65 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: radial-gradient(circle at top left, var(--bg-mid), var(--bg-dark));
-  color: var(--text);
-  min-height: 100vh;
+  font-family: "Courier New", Courier, monospace;
+  background: linear-gradient(135deg, #1f2330, #232b5a);
+  color: var(--ink);
 }
 
-.game-shell {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  display: grid;
-  gap: 1rem;
-}
-
-h1,
-h2,
-p {
-  margin: 0;
-}
-
-.subtitle {
-  color: #d7d4ff;
-}
-
-.panel {
-  background: var(--panel);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 14px;
+.app {
+  max-width: 880px;
+  margin: 1.2rem auto;
   padding: 1rem;
-  backdrop-filter: blur(4px);
+  background: var(--paper);
+  border: 10px solid #202124;
 }
 
-.status-panel {
+.topbar {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 0.7rem;
 }
 
-.name-inputs {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.topbar h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+}
+
+.topbar-right {
+  display: flex;
   gap: 1rem;
+  font-weight: 700;
+}
+
+.controls,
+.status-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
 }
 
 label {
   display: grid;
-  gap: 0.4rem;
-  font-size: 0.95rem;
+  gap: 0.25rem;
+  font-size: 0.82rem;
 }
 
-input {
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem;
-}
-
-.buttons {
-  margin-top: 1rem;
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+input,
+button {
+  border: 2px solid #2d2d2d;
+  border-radius: 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.45rem;
 }
 
 button {
-  border: none;
-  border-radius: 10px;
-  padding: 0.65rem 1rem;
+  background: var(--accent);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-button:hover:not(:disabled) {
-  transform: translateY(-2px);
 }
 
 button:disabled {
@@ -98,69 +82,86 @@ button:disabled {
   cursor: not-allowed;
 }
 
-#start-game {
-  background: var(--accent);
+.panel {
+  border: 2px solid #2d2d2d;
+  background: #fff;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-#roll-btn {
-  background: var(--player-one);
+.arena {
+  background: linear-gradient(var(--sky1), var(--sky2));
 }
 
-#jump-btn {
-  background: #c77dff;
+.lane-title {
+  font-size: 0.8rem;
+  margin-bottom: 0.15rem;
 }
 
-#track {
-  margin-top: 0.8rem;
-  display: grid;
-  gap: 0.6rem;
-}
-
-.lane {
+.dino-lane {
   position: relative;
-  height: 48px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 92px;
+  margin-bottom: 0.6rem;
+  border: 2px solid #303030;
   overflow: hidden;
 }
 
+.dino-lane::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  border-top: 2px dashed var(--ground);
+}
+
+.cloud,
 .runner,
 .obstacle {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.4rem;
+}
+
+.cloud {
+  top: 10px;
+  color: #b6bdc5;
+  font-size: 1rem;
+}
+
+.runner {
+  bottom: 10px;
+  font-size: 1.85rem;
 }
 
 .obstacle {
-  color: var(--danger);
+  bottom: 8px;
+  font-size: 1.7rem;
+  color: var(--cactus);
 }
 
-.runner.player-one {
-  color: var(--player-one);
+.player-one-lane .runner {
+  color: var(--p1);
 }
 
-.runner.player-two {
-  color: var(--player-two);
+.player-two-lane .runner {
+  color: var(--p2);
 }
 
 #message {
-  margin-top: 0.8rem;
-  font-weight: 600;
+  margin: 0.2rem 0 0;
+  font-weight: 700;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
 }
 
 ul,
 ol {
-  margin: 0.8rem 0 0;
+  margin: 0.55rem 0 0;
   padding-left: 1.1rem;
 }
 
 li {
-  margin-bottom: 0.35rem;
-}
-
-@media (max-width: 640px) {
-  .status-panel {
-    flex-direction: column;
-  }
+  margin-bottom: 0.24rem;
 }
