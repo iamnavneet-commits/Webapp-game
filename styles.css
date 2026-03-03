@@ -1,0 +1,166 @@
+:root {
+  --bg-dark: #181736;
+  --bg-mid: #2b2963;
+  --panel: rgba(255, 255, 255, 0.12);
+  --text: #f4f4ff;
+  --accent: #ffd166;
+  --player-one: #4ecdc4;
+  --player-two: #ff6b6b;
+  --danger: #ef476f;
+  --success: #06d6a0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at top left, var(--bg-mid), var(--bg-dark));
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.game-shell {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+.subtitle {
+  color: #d7d4ff;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.status-panel {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.name-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+}
+
+input {
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem;
+}
+
+.buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#start-game {
+  background: var(--accent);
+}
+
+#roll-btn {
+  background: var(--player-one);
+}
+
+#jump-btn {
+  background: #c77dff;
+}
+
+#track {
+  margin-top: 0.8rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.lane {
+  position: relative;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.runner,
+.obstacle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+}
+
+.obstacle {
+  color: var(--danger);
+}
+
+.runner.player-one {
+  color: var(--player-one);
+}
+
+.runner.player-two {
+  color: var(--player-two);
+}
+
+#message {
+  margin-top: 0.8rem;
+  font-weight: 600;
+}
+
+ul,
+ol {
+  margin: 0.8rem 0 0;
+  padding-left: 1.1rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+}
+
+@media (max-width: 640px) {
+  .status-panel {
+    flex-direction: column;
+  }
+}

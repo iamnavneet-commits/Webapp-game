@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Sprint: Turn Clash</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <h1>🎮 Color Sprint: Turn Clash</h1>
+      <p class="subtitle">
+        A colorful, turn-based spin on the classic offline runner.
+      </p>
+
+      <section class="panel status-panel">
+        <div>
+          <strong>Turn:</strong> <span id="turn-indicator">Player 1</span>
+        </div>
+        <div>
+          <strong>Round:</strong> <span id="round-indicator">1</span> / 10
+        </div>
+        <div>
+          <strong>Current Roll:</strong> <span id="current-roll">0</span>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <div class="name-inputs">
+          <label>
+            Player 1 Name
+            <input id="player-one-name" maxlength="14" placeholder="Player 1" />
+          </label>
+          <label>
+            Player 2 Name
+            <input id="player-two-name" maxlength="14" placeholder="Player 2" />
+          </label>
+        </div>
+        <div class="buttons">
+          <button id="start-game">Start / Restart</button>
+          <button id="roll-btn" disabled>Roll Move</button>
+          <button id="jump-btn" disabled>Jump Obstacle</button>
+        </div>
+      </section>
+
+      <section class="panel track-panel">
+        <h2>Race Track</h2>
+        <div id="track"></div>
+        <p id="message">Press Start to begin!</p>
+      </section>
+
+      <section class="panel scoreboard">
+        <h2>Live Scores</h2>
+        <ul id="score-list"></ul>
+      </section>
+
+      <section class="panel leaderboard">
+        <h2>🏆 Leaderboard (Top 5)</h2>
+        <ol id="leaderboard-list"></ol>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
