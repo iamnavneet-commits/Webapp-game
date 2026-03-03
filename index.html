@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Dino Run</title>
+  <style>
+    :root {
+      --bg1: #1f2a44;
+      --bg2: #3a4e8f;
+      --panel: #f7f9ff;
+      --ink: #1c1c1c;
+      --accent: #ffcc00;
+      --danger: #ff3b30;
+      --ground: #7f8ea3;
+      --dino: #14b8a6;
+      --cactus: #2ea043;
+      --cloud: #c7d2fe;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Courier New", monospace;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      color: var(--ink);
+    }
+
+    .game-shell {
+      width: min(920px, 95vw);
+      background: var(--panel);
+      border: 10px solid #1f1f1f;
+      padding: 12px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .hud h1 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .scores {
+      display: flex;
+      gap: 16px;
+    }
+
+    .world {
+      position: relative;
+      height: 260px;
+      border: 3px solid #2d2d2d;
+      overflow: hidden;
+      background: linear-gradient(180deg, #e7f1ff 0%, #fff6dc 100%);
+    }
+
+    .cloud {
+      position: absolute;
+      font-size: 26px;
+      color: var(--cloud);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .ground-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 58px;
+      border-top: 3px dashed var(--ground);
+    }
+
+    .dino {
+      position: absolute;
+      left: 62px;
+      bottom: 60px;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      font-size: 38px;
+      color: var(--dino);
+      transform-origin: center bottom;
+    }
+
+    .obstacle {
+      position: absolute;
+      bottom: 60px;
+      width: 28px;
+      height: 44px;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--cactus);
+      display: grid;
+      place-items: end center;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .hint {
+      opacity: 0.8;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1rem;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 120ms linear;
+    }
+
+    .overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .overlay h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: var(--danger);
+    }
+
+    .overlay p {
+      margin: 0.5rem 0 0;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .world { height: 220px; }
+      .dino { left: 40px; }
+      .hud { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell">
+    <header class="hud">
+      <h1>COLOR DINO RUN</h1>
+      <div class="scores">
+        <span>HI <strong id="hi">00000</strong></span>
+        <span>SCORE <strong id="score">00000</strong></span>
+      </div>
+    </header>
+
+    <section class="world" id="world" aria-label="Game world">
+      <span class="cloud" style="left: 14%; top: 28px;">☁️</span>
+      <span class="cloud" style="left: 62%; top: 48px;">☁️</span>
+      <div class="ground-line"></div>
+      <div class="dino" id="dino" aria-label="Player">🦖</div>
+      <div class="overlay" id="overlay">
+        <div>
+          <h2>GAME OVER</h2>
+          <p>Press SPACE or ENTER to restart</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="meta">
+      <span>Status: <strong id="status">Running</strong></span>
+      <span>Speed: <strong id="speed">8.0</strong></span>
+    </div>
+    <p class="hint">Controls: Press <strong>SPACE</strong> to jump.</p>
+  </main>
+
+  <script>
+    // -----------------------------
+    // Config
+    // -----------------------------
+    const GRAVITY = 0.92;
+    const JUMP_VELOCITY = 16.5;
+    const BASE_SPEED = 8;
+    const MAX_SPEED = 18;
+    const SPEED_GAIN_PER_SEC = 0.22;
+    const SPAWN_MIN = 900;
+    const SPAWN_MAX = 1800;
+    const HI_KEY = "colorDinoHighScore";
+
+    // -----------------------------
+    // DOM references
+    // -----------------------------
+    const worldEl = document.getElementById("world");
+    const dinoEl = document.getElementById("dino");
+    const scoreEl = document.getElementById("score");
+    const hiEl = document.getElementById("hi");
+    const statusEl = document.getElementById("status");
+    const speedEl = document.getElementById("speed");
+    const overlayEl = document.getElementById("overlay");
+
+    // -----------------------------
+    // Game state
+    // -----------------------------
+    const game = {
+      running: true,
+      score: 0,
+      hi: Number(localStorage.getItem(HI_KEY) || 0),
+      speed: BASE_SPEED,
+      lastTs: 0,
+      spawnTimer: 0,
+      nextSpawnAt: randRange(SPAWN_MIN, SPAWN_MAX),
+      obstacles: [],
+      dino: {
+        x: 62,
+        y: 0,
+        vy: 0,
+        w: 48,
+        h: 48,
+        onGround: true,
+      },
+    };
+
+    // -----------------------------
+    // Input handling
+    // -----------------------------
+    window.addEventListener("keydown", (event) => {
+      const code = event.code;
+
+      if (code === "Space") {
+        event.preventDefault();
+        if (!game.running) {
+          restartGame();
+          return;
+        }
+        jump();
+      }
+
+      if ((code === "Enter" || code === "NumpadEnter") && !game.running) {
+        event.preventDefault();
+        restartGame();
+      }
+    });
+
+    function jump() {
+      if (game.dino.onGround) {
+        game.dino.vy = JUMP_VELOCITY;
+        game.dino.onGround = false;
+      }
+    }
+
+    // -----------------------------
+    // Main game loop
+    // -----------------------------
+    function gameLoop(timestamp) {
+      if (!game.lastTs) {
+        game.lastTs = timestamp;
+      }
+
+      const dtMs = timestamp - game.lastTs;
+      const dt = Math.min(0.05, dtMs / 1000);
+      game.lastTs = timestamp;
+
+      if (game.running) {
+        update(dt);
+      }
+
+      render();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // -----------------------------
+    // Update phase
+    // -----------------------------
+    function update(dt) {
+      // Increase speed smoothly over time.
+      game.speed = Math.min(MAX_SPEED, game.speed + SPEED_GAIN_PER_SEC * dt);
+
+      // Score increases over time and scales with speed.
+      game.score += dt * (12 + game.speed * 1.4);
+
+      // Dino physics.
+      game.dino.vy -= GRAVITY * 60 * dt;
+      game.dino.y += game.dino.vy * 60 * dt;
+
+      if (game.dino.y <= 0) {
+        game.dino.y = 0;
+        game.dino.vy = 0;
+        game.dino.onGround = true;
+      }
+
+      // Obstacle spawning.
+      game.spawnTimer += dt * 1000;
+      if (game.spawnTimer >= game.nextSpawnAt) {
+        spawnObstacle();
+        game.spawnTimer = 0;
+        const squeeze = Math.max(280, (game.speed - BASE_SPEED) * 45);
+        game.nextSpawnAt = randRange(SPAWN_MIN - squeeze, SPAWN_MAX - squeeze / 2);
+      }
+
+      // Move obstacles and prune off-screen ones.
+      for (const obstacle of game.obstacles) {
+        obstacle.x -= game.speed * 260 * dt;
+      }
+      game.obstacles = game.obstacles.filter((obs) => obs.x + obs.w > -8);
+
+      // Collision detection.
+      const playerRect = {
+        x: game.dino.x + 8,
+        y: 60 + game.dino.y + 6,
+        w: game.dino.w - 14,
+        h: game.dino.h - 10,
+      };
+
+      for (const obs of game.obstacles) {
+        const obstacleRect = {
+          x: obs.x + 4,
+          y: 60,
+          w: obs.w - 6,
+          h: obs.h,
+        };
+        if (intersects(playerRect, obstacleRect)) {
+          endGame();
+          break;
+        }
+      }
+
+      // High score tracking.
+      if (game.score > game.hi) {
+        game.hi = game.score;
+        localStorage.setItem(HI_KEY, String(Math.floor(game.hi)));
+      }
+    }
+
+    function spawnObstacle() {
+      const worldWidth = worldEl.clientWidth;
+      const tall = Math.random() > 0.76;
+      const w = tall ? 34 : 28;
+      const h = tall ? 50 : 44;
+      game.obstacles.push({
+        x: worldWidth + 10,
+        y: 0,
+        w,
+        h,
+        icon: tall ? "🌵" : "🌵",
+      });
+    }
+
+    function endGame() {
+      game.running = false;
+      statusEl.textContent = "Game Over";
+      overlayEl.classList.add("show");
+    }
+
+    function restartGame() {
+      game.running = true;
+      game.score = 0;
+      game.speed = BASE_SPEED;
+      game.spawnTimer = 0;
+      game.nextSpawnAt = randRange(SPAWN_MIN, SPAWN_MAX);
+      game.obstacles = [];
+      game.dino.y = 0;
+      game.dino.vy = 0;
+      game.dino.onGround = true;
+      statusEl.textContent = "Running";
+      overlayEl.classList.remove("show");
+    }
+
+    // -----------------------------
+    // Render phase
+    // -----------------------------
+    function render() {
+      scoreEl.textContent = pad5(Math.floor(game.score));
+      hiEl.textContent = pad5(Math.floor(game.hi));
+      speedEl.textContent = game.speed.toFixed(1);
+
+      dinoEl.style.bottom = `${60 + game.dino.y}px`;
+      dinoEl.style.transform = game.dino.onGround ? "scaleX(1)" : "translateY(-2px) rotate(-8deg)";
+
+      // Rebuild obstacle DOM (small list, simple and fast for this scope).
+      const old = worldEl.querySelectorAll(".obstacle");
+      old.forEach((node) => node.remove());
+
+      for (const obs of game.obstacles) {
+        const node = document.createElement("div");
+        node.className = "obstacle";
+        node.textContent = obs.icon;
+        node.style.left = `${obs.x}px`;
+        node.style.width = `${obs.w}px`;
+        node.style.height = `${obs.h}px`;
+        node.style.fontSize = obs.h > 44 ? "40px" : "36px";
+        worldEl.appendChild(node);
+      }
+    }
+
+    // -----------------------------
+    // Utilities
+    // -----------------------------
+    function intersects(a, b) {
+      return (
+        a.x < b.x + b.w &&
+        a.x + a.w > b.x &&
+        a.y < b.y + b.h &&
+        a.y + a.h > b.y
+      );
+    }
+
+    function randRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pad5(value) {
+      return String(value).padStart(5, "0");
+    }
+
+    // Initial paint + start loop.
+    hiEl.textContent = pad5(Math.floor(game.hi));
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+</html>
